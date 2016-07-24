@@ -42,21 +42,14 @@ if sys.version_info >= (2, 7, 9):
 
 def init_config():
     parser = ArgumentParser()
-    config_file = "config.json"
-
-    # If config file exists, load variables from json
     load = {}
-    if isfile(config_file):
-        with open(config_file) as data:
-            load.update(read_json(data))
 
     # Read passed in Arguments
-    required = lambda x: not x in load
-    parser.add_argument("-a", "--auth_service", help="Auth Service ('ptc' or 'google')",
-        required=required("auth_service"))
-    parser.add_argument("-u", "--username", help="Username", required=required("username"))
-    parser.add_argument("-p", "--password", help="Password", required=required("password"))
-    parser.add_argument("-l", "--location", help="Location", required=required("location"))
+    parser.add_argument("-cf", "--config", help="Configuration file",default=None)
+    parser.add_argument("-a", "--auth_service", help="Auth Service ('ptc' or 'google')")
+    parser.add_argument("-u", "--username", help="Username")
+    parser.add_argument("-p", "--password", help="Password")
+    parser.add_argument("-l", "--location", help="Location")
     parser.add_argument("-s", "--spinstop", help="SpinPokeStop", action='store_true')
     parser.add_argument("-v", "--stats", help="Show Stats and Exit", action='store_true')
     parser.add_argument("-w", "--walk", help="Walk instead of teleport with given speed (meters per second, e.g. 2.5)", type=float, default=2.5)
@@ -70,11 +63,30 @@ def init_config():
     parser.add_argument("-tl", "--transfer_list", help="Transfer these pokemons regardless cp(pidgey,drowzee,rattata)", type=str, default='')
     parser.set_defaults(DEBUG=False, TEST=False)
     config = parser.parse_args()
-    
+
+    if config.config and config.config is not 'false':
+        default_config = "config.json"
+
+        if isfile(config.config):
+            print '[x] Loading configuration file : ' + config.config
+            with open(config.config) as data:
+                load.update(read_json(data))
+        else:
+            print '[x] Loading default configuration file'
+            with open(default_config) as data:
+                load.update(read_json(data))
+    else:
+        if config.auth_service is None \
+                or config.username is None \
+                or config.password is None \
+                or config.location is None:
+            parser.error('without -cf <true|filename.json>, (-a <auth_service> -u <username> -p <password> -l <location>) are required')
+            return None
+
 
     # Passed in arguments shoud trump
     for key in config.__dict__:
-        if key in load and config.__dict__[key] is None:
+        if key in load:
             config.__dict__[key] = load[key]
 
     if config.auth_service not in ['ptc', 'google']:

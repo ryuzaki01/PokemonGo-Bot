@@ -1,6 +1,17 @@
 {
-    "auth_service": "google",
-    "username": "example@gmail.com",
-    "password": "password11!!",
-    "location": "New York"
+  "auth_service": "google",
+  "username": "example@gmail.com",
+  "password": "password11!!",
+  "location": "New York",
+  "gmapkey": "",
+  "spinstop": true,
+  "walk": 3,
+  "maxsteps": 5,
+  "cp": false,
+  "pokemon_potential": 0.4,
+  "transfer_list": "",
+  "item_filter": "",
+  "debug": false,
+  "stats": false,
+  "test": false
 }

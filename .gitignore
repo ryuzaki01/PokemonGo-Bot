@@ -90,3 +90,8 @@ ENV/
 
 # Personal load details
 config.json
+!config.json.example
+.idea/
+bin/
+include/
+pip-selfcheck.json
